@@ -1,20 +1,15 @@
+/* eslint-disable class-methods-use-this */
 interface MenuItem {
   getMenu(items: string[]): string
 }
 
-class BaseDropDownMenu implements MenuItem {
-  getMenu(items: string[]) {
-    return '';
-  }
-}
-
-class GreenDropDownMenu extends BaseDropDownMenu {
+class GreenDropDownMenu implements MenuItem {
   getMenu(items: string[]) {
     return `<ul style="color: green">${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
   }
 }
 
-class RedDropDownMenu extends BaseDropDownMenu {
+class RedDropDownMenu implements MenuItem {
   getMenu(items: string[]) {
     return `<ul style="color: red">${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
   }
@@ -22,12 +17,6 @@ class RedDropDownMenu extends BaseDropDownMenu {
 
 interface ListItem {
   getList(items: string[]): string
-}
-
-class BaseListDownMenu implements ListItem {
-  getList(items: string[]) {
-    return '';
-  }
 }
 
 class GreenDropDownList implements ListItem {
@@ -45,8 +34,8 @@ class RedDropDownList implements ListItem {
 }
 
 abstract class AbstractFactory {
-  abstract getMenu(name: string): any;
-  abstract getList(name: string): any;
+  abstract getMenu(name: string): MenuItem ;
+  abstract getList(name: string): ListItem ;
 }
 
 class MenuFactory extends AbstractFactory {
@@ -57,36 +46,41 @@ class MenuFactory extends AbstractFactory {
     if (name === 'RED') {
       return new RedDropDownMenu();
     }
+    return new RedDropDownMenu();
   }
 
-  getList(_name: string): any {
-    return null;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getList(name: string) {
+    return new GreenDropDownList();
   }
 }
 
 class ListFactory extends AbstractFactory {
-  getList(name: string): GreenDropDownList | RedDropDownList | undefined {
+  getList(name: string) {
     if (name === 'GREEN') {
       return new GreenDropDownList();
     }
     if (name === 'RED') {
       return new RedDropDownList();
     }
+    return new RedDropDownList();
   }
 
-  getMenu(_name: string): null {
-    return null;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getMenu(name: string) {
+    return new GreenDropDownMenu();
   }
 }
 
 class FactoryProducer {
-  static getFactory(name: string): any {
+  static getFactory(name: string): AbstractFactory {
     if (name === 'MENU') {
       return new MenuFactory();
     }
     if (name === 'LIST') {
       return new ListFactory();
     }
+    return new MenuFactory();
   }
 }
 
